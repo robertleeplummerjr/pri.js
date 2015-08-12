@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>I'm the parent</title>
+</head>
+<body>
+<button id="opener">Click me and I'll open a child</button>
+</body>
+<script>
+    //http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript#answer-105074
+    function guid() {
+        function s4() {
+            return Math.floor((1 + Math.random()) * 0x10000)
+                    .toString(16)
+                    .substring(1);
+        }
+        return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+                s4() + '-' + s4() + s4() + s4();
+    }
+
+    var opener = document.getElementById('opener'),
+        theGuid = window.theGuid = guid();
+
+    opener.addEventListener('click', function() {
+        window.open('child1.html');
+    });
+</script>
+</html>
