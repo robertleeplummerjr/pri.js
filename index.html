@@ -6,6 +6,10 @@
 </head>
 <body>
 <button id="opener">Click me and I'll open a child</button>
+<button id="detector">Click me to know which child is open</button>
+<ul id="list">
+
+</ul>
 </body>
 <script>
     //http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript#answer-105074
@@ -20,10 +24,23 @@
     }
 
     var opener = document.getElementById('opener'),
-        theGuid = window.theGuid = guid();
+        theGuid = window.theGuid = guid(),
+        detector = document.getElementById('detector'),
+        list = document.getElementById('list'),
+        li,
+        childWindow = null;
 
     opener.addEventListener('click', function() {
-        window.open('child1.html');
+      childWindow = window.open('child1.html');
     });
+    detector.addEventListener('click', function() {
+        if (childWindow !== null) {
+          li = document.createElement('li');
+          li.innerHTML = childWindow.location;
+          list.appendChild(li);
+        }
+    });
+
+
 </script>
 </html>
