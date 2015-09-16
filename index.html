@@ -11,6 +11,7 @@
 
 </ul>
 </body>
+<script src="RequestIntercept.js"></script>
 <script>
     //http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript#answer-105074
     function guid() {
@@ -32,6 +33,11 @@
 
     opener.addEventListener('click', function() {
       childWindow = window.open('child1.html');
+        var r = new RequestIntercept(childWindow, {
+            done: function() {
+                alert('hi!  I am a hijacked XML Http Request');
+            }
+        });
     });
     detector.addEventListener('click', function() {
         if (childWindow !== null) {
