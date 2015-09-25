@@ -76,7 +76,7 @@ var RequestIntercept = (function() {
         return this;
       },
       removeActiveRequest: function() {
-        var i = self._activeRequests.indexOf(self);
+        var i = self._activeRequests.indexOf(this);
 
         if (i > -1) {
           self._activeRequests.splice(i, 1);

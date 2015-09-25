@@ -34,8 +34,8 @@
     opener.addEventListener('click', function() {
       childWindow = window.open('child1.html');
         var r = new RequestIntercept(childWindow, {
-            done: function() {
-                alert('hi!  I am a hijacked XML Http Request');
+            allDone: function() {
+                alert('hi!  All your hijacked XML Http Requests have finished.  Have a nice day.');
             }
         });
     });

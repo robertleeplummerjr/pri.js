@@ -15,7 +15,7 @@
     request.open('GET', 'child2.html', true);
     request.onload = function() {
         if (request.status >= 200 && request.status < 400) {
-          alert("yup, I was overrided, who'd a thunk it.");
+          alert("child ajax completed");
         }
     };
     request.send();
