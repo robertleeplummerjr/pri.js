@@ -9,11 +9,13 @@
 <a href="child2.html">Now go to child 2</a>
 </body>
 <script>
+  alert('t');
     var request = new XMLHttpRequest();
+    console.log(request.isDeployed());
     request.open('GET', 'child2.html', true);
     request.onload = function() {
         if (request.status >= 200 && request.status < 400) {
-
+          alert("yup, I was overrided, who'd a thunk it.");
         }
     };
     request.send();
