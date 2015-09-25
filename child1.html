@@ -1,26 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>child 1</title>
+  <meta charset="UTF-8">
+  <title>child 1</title>
 </head>
 <body>
 <span id="echo-parent"></span>
 <a href="child2.html">Now go to child 2</a>
 </body>
 <script>
-  alert('t');
-    var request = new XMLHttpRequest();
-    console.log(request.isDeployed());
-    request.open('GET', 'child2.html', true);
-    request.onload = function() {
-        if (request.status >= 200 && request.status < 400) {
-          alert("child ajax completed");
-        }
-    };
-    request.send();
+  var request = new XMLHttpRequest();
+  console.log(request.isDeployed());
+  request.open('GET', 'child2.html', true);
+  request.onload = function() {
+    if (request.status >= 200 && request.status < 400) {
+      alert("child ajax completed");
+    }
+  };
+  request.send();
 
-    var echoParent = document.getElementById('echo-parent');
-    echoParent.innerHTML = window.opener.theGuid;
+  var echoParent = document.getElementById('echo-parent');
+  echoParent.innerHTML = window.opener.theGuid;
 </script>
 </html>

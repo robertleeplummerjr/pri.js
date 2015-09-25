@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>child 2</title>
+  <meta charset="UTF-8">
+  <title>child 2</title>
 </head>
 <body>
 <span id="echo-parent"></span>
 <a href="child1.html">Now go to child 1</a>
 </body>
 <script>
-    var echoParent = document.getElementById('echo-parent');
-    echoParent.innerHTML = window.opener.theGuid;
+  var echoParent = document.getElementById('echo-parent');
+  echoParent.innerHTML = window.opener.theGuid;
 </script>
 </html>
