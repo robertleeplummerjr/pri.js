@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>I'm the parent</title>
+  <meta charset="UTF-8">
+  <title>I'm the parent</title>
 </head>
 <body>
 <button id="opener">Click me and I'll open a child</button>
@@ -13,39 +13,43 @@
 </body>
 <script src="RequestIntercept.js"></script>
 <script>
-    //http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript#answer-105074
-    function guid() {
-        function s4() {
-            return Math.floor((1 + Math.random()) * 0x10000)
-                    .toString(16)
-                    .substring(1);
-        }
-        return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-                s4() + '-' + s4() + s4() + s4();
+  //http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript#answer-105074
+  function guid() {
+    function s4() {
+      return Math.floor((1 + Math.random()) * 0x10000)
+          .toString(16)
+          .substring(1);
     }
 
-    var opener = document.getElementById('opener'),
-        theGuid = window.theGuid = guid(),
-        detector = document.getElementById('detector'),
-        list = document.getElementById('list'),
-        li,
-        childWindow = null;
+    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
+        s4() + '-' + s4() + s4() + s4();
+  }
 
-    opener.addEventListener('click', function() {
-      childWindow = window.open('child1.html');
-        var r = new RequestIntercept(childWindow, {
-            allDone: function() {
-                alert('hi!  All your hijacked XML Http Requests have finished.  Have a nice day.');
-            }
-        });
+  var opener = document.getElementById('opener'),
+      theGuid = window.theGuid = guid(),
+      detector = document.getElementById('detector'),
+      list = document.getElementById('list'),
+      li,
+      childWindow = null;
+
+  opener.addEventListener('click', function () {
+    childWindow = window.open('child1.html');
+    var r = new RequestIntercept(childWindow, {
+      allDone: function () {
+        alert('hi!  All your hijacked XML Http Requests have finished.  Have a nice day.');
+      },
+      scopeChange: function (settings) {
+        alert('Scope changed, wow!');
+      }
     });
-    detector.addEventListener('click', function() {
-        if (childWindow !== null) {
-          li = document.createElement('li');
-          li.innerHTML = childWindow.location;
-          list.appendChild(li);
-        }
-    });
+  });
+  detector.addEventListener('click', function () {
+    if (childWindow !== null) {
+      li = document.createElement('li');
+      li.innerHTML = childWindow.location;
+      list.appendChild(li);
+    }
+  });
 
 
 </script>

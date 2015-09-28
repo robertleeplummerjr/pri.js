@@ -1,16 +1,34 @@
 var RequestIntercept = (function() {
-  function RequestIntercept(scope, settings) {
+  /**
+   *
+   * @param {Window} window
+   * @param settings
+   * @constructor
+   */
+  function RequestIntercept(window, settings) {
     var self = this;
-    if (scope === undefined) {
-      throw new Error('scope object is required so as to intercept');
+
+    if (window === undefined) {
+      throw new Error('window object is required so as to intercept');
     }
     this.settings = settings;
     this.setSettings();
     this._isDeployed = true;
+    window.onbeforeunload = function() {
+      var interval = setInterval(function() {
+        if (window.XMLHttpRequest.prototype.isDeployed === undefined) {
+          new RequestIntercept(window, settings);
+          if (settings.scopeChange) {
+            settings.scopeChange();
+          }
+          clearInterval(interval);
+        }
+      },0);
+    };
 
-    var Request = scope.XMLHttpRequest;
+    var Request = window.XMLHttpRequest;
 
-    scope.XMLHttpRequest = function XMLHttpRequest(objParameters) {
+    function XMLHttpRequest(objParameters) {
       var self = this,
         real = this.real = new Request(objParameters);
 
@@ -38,9 +56,9 @@ var RequestIntercept = (function() {
         return self;
       };
 
-    };
+    }
 
-    scope.XMLHttpRequest.prototype = {
+    XMLHttpRequest.prototype = {
       get status() {
         return this.real.status;
       },
@@ -99,6 +117,8 @@ var RequestIntercept = (function() {
         return self._isDeployed || false;
       }
     };
+
+    window.XMLHttpRequest = XMLHttpRequest;
   }
 
   RequestIntercept.prototype = {
@@ -118,7 +138,8 @@ var RequestIntercept = (function() {
   RequestIntercept.defaultSettings = {
     allDone: function() {},
     load: function() {},
-    error: function() {}
+    error: function() {},
+    scopeChange: function() {}
   };
 
   return RequestIntercept;
