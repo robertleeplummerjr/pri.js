@@ -34,9 +34,12 @@
     opener.addEventListener('click', function() {
       childWindow = window.open('child1.html');
         var r = new RequestIntercept(childWindow, {
-            allDone: function() {
-                alert('hi!  All your hijacked XML Http Requests have finished.  Have a nice day.');
-            }
+          allDone: function() {
+            alert('hi!  All your hijacked XML Http Requests have finished.  Have a nice day.');
+          },
+          windowChange: function(newWindow) {
+            alert('window changed');
+          }
         });
     });
     detector.addEventListener('click', function() {
@@ -46,7 +49,5 @@
           list.appendChild(li);
         }
     });
-
-
 </script>
 </html>

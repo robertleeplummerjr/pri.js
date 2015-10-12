@@ -1,4 +1,10 @@
-var RequestIntercept = (function() {
+var RequestIntercept = (function(undefined) {
+  /**
+   *
+   * @param {Window} scope
+   * @param {Object} settings
+   * @constructor
+   */
   function RequestIntercept(scope, settings) {
     var self = this;
     if (scope === undefined) {
@@ -10,6 +16,21 @@ var RequestIntercept = (function() {
 
     var Request = scope.XMLHttpRequest;
 
+    scope.addEventListener('beforeunload', function() {
+      //scope is about to change into a new window
+      setTimeout(function() {
+        //scope is now potentially new window
+        if (settings.windowChange !== null) {
+          settings.windowChange(scope.window);
+        }
+
+        if (scope.window && scope.window.XMLHttpRequest) {
+          //scope is now a confirmed new window
+          new RequestIntercept(scope.window, settings);
+        }
+      }, 0);
+    });
+
     scope.XMLHttpRequest = function XMLHttpRequest(objParameters) {
       var self = this,
         real = this.real = new Request(objParameters);
@@ -17,9 +38,9 @@ var RequestIntercept = (function() {
       real.onload = function() {
         self.removeActiveRequest();
 
-        if (self.onload !== undefined) {
+        if (self.onload !== null) {
           self.onload.apply(real, arguments);
-        } else if (self.settings.load !== undefined) {
+        } else if (self.settings.load !== null) {
           self.settings.load();
         }
 
@@ -29,15 +50,14 @@ var RequestIntercept = (function() {
       };
 
       real.onerror = function() {
-        if (self.onerror !== undefined) {
+        if (self.onerror !== null) {
           self.onerror.apply(real, arguments);
-        } else if (self.settings.error !== undefined) {
+        } else if (self.settings.error !== null) {
           self.settings.error();
         }
 
         return self;
       };
-
     };
 
     scope.XMLHttpRequest.prototype = {
@@ -86,9 +106,9 @@ var RequestIntercept = (function() {
       },
       checkActiveRequestsState: function() {
         if (self._activeRequests.length < 1) {
-          if (self.alldone !== undefined) {
+          if (self.alldone !== null) {
             self.alldone();
-          } else if (self.settings.allDone !== undefined) {
+          } else if (self.settings.allDone !== null) {
             self.settings.allDone();
           }
         }
@@ -116,9 +136,10 @@ var RequestIntercept = (function() {
   };
 
   RequestIntercept.defaultSettings = {
-    allDone: function() {},
-    load: function() {},
-    error: function() {}
+    allDone     : null,
+    load        : null,
+    error       : null,
+    windowChange: null
   };
 
   return RequestIntercept;
