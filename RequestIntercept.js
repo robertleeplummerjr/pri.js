@@ -6,7 +6,6 @@ var RequestIntercept = (function(undefined) {
    * @constructor
    */
   function RequestIntercept(scope, settings) {
-    var self = this;
     if (scope === undefined) {
       throw new Error('scope object is required so as to intercept');
     }
@@ -14,7 +13,8 @@ var RequestIntercept = (function(undefined) {
     this.setSettings();
     this._isDeployed = true;
 
-    var Request = scope.XMLHttpRequest;
+    var self = this,
+      Request = scope.XMLHttpRequest;
 
     scope.addEventListener('beforeunload', function() {
       //scope is about to change into a new window
@@ -31,7 +31,7 @@ var RequestIntercept = (function(undefined) {
       }, 0);
     });
 
-    scope.XMLHttpRequest = function XMLHttpRequest(objParameters) {
+    function XMLHttpRequest(objParameters) {
       var self = this,
         real = this.real = new Request(objParameters);
 
@@ -58,9 +58,9 @@ var RequestIntercept = (function(undefined) {
 
         return self;
       };
-    };
+    }
 
-    scope.XMLHttpRequest.prototype = {
+    XMLHttpRequest.prototype = {
       get status() {
         return this.real.status;
       },
@@ -119,6 +119,8 @@ var RequestIntercept = (function(undefined) {
         return self._isDeployed || false;
       }
     };
+
+    scope.XMLHttpRequest = XMLHttpRequest;
   }
 
   RequestIntercept.prototype = {
