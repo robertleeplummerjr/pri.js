@@ -9,17 +9,19 @@
 <a href="child2.html">Now go to child 2</a>
 </body>
 <script>
-  var request = new XMLHttpRequest();
-  console.log(request.isDeployed());
-  request.open('GET', 'child2.html', true);
-  request.onload = function() {
-    if (request.status >= 200 && request.status < 400) {
-      alert("child ajax completed");
-    }
-  };
-  request.send();
+  document.addEventListener('DOMContentLoaded', function() {
+    var request = new XMLHttpRequest();
+    console.log(request.isDeployed ? request.isDeployed() : false);
+    request.open('GET', 'child2.html', true);
+    request.onload = function() {
+      if (request.status >= 200 && request.status < 400) {
+        alert("child ajax completed");
+      }
+    };
+    request.send();
 
-  var echoParent = document.getElementById('echo-parent');
-  echoParent.innerHTML = window.opener.theGuid;
+    var echoParent = document.getElementById('echo-parent');
+    echoParent.innerHTML = window.opener.theGuid;
+  });
 </script>
 </html>
