@@ -1,3 +1,5 @@
+'use strict';
+
 var RequestIntercept = (function(undefined) {
   /**
    *
@@ -38,9 +40,9 @@ var RequestIntercept = (function(undefined) {
       real.onload = function() {
         self.removeActiveRequest();
 
-        if (self.onload !== null) {
+        if (self.onload) {
           self.onload.apply(real, arguments);
-        } else if (self.settings.load !== null) {
+        } else if (self.settings.load) {
           self.settings.load();
         }
 
@@ -106,9 +108,9 @@ var RequestIntercept = (function(undefined) {
       },
       checkActiveRequestsState: function() {
         if (self._activeRequests.length < 1) {
-          if (self.alldone !== null) {
+          if (self.alldone) {
             self.alldone();
-          } else if (self.settings.allDone !== null) {
+          } else if (self.settings.allDone) {
             self.settings.allDone();
           }
         }
