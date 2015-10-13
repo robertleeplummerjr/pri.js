@@ -7,6 +7,7 @@
  */
 var pri = (function(undefined) {
   var activeRequests  = []
+    , inactiveRequests= []
     , isDeployed      = false
     , defaultSettings = {
         allRequestsDone: null,
@@ -52,7 +53,7 @@ var pri = (function(undefined) {
         if (self.onload) {
           self.onload.apply(realRequest, arguments);
         } else if (settings.load) {
-          settings.load();
+          settings.load.apply(realRequest, arguments);
         }
 
         self.checkActiveRequestsState();
@@ -64,7 +65,7 @@ var pri = (function(undefined) {
         if (self.onerror !== null) {
           self.onerror.apply(realRequest, arguments);
         } else if (settings.error !== null) {
-          settings.error();
+          settings.error.apply(realRequest, arguments);
         }
 
         return self;
@@ -94,8 +95,9 @@ var pri = (function(undefined) {
         return isDeployed || false;
       },
       send: function() {
-        this.addActiveRequest();
-        this.realRequest.send();
+        this
+          .addActiveRequest()
+          .realRequest.send();
 
         return this;
       },
@@ -105,15 +107,18 @@ var pri = (function(undefined) {
         return this;
       },
       addActiveRequest: function() {
-        activeRequests.push(this);
+        activeRequests.push(this.realRequest);
 
         return this;
       },
       removeActiveRequest: function() {
-        var i = activeRequests.indexOf(this);
+        var i = activeRequests.indexOf(this.realRequest)
+          , removed
+          ;
 
         if (i > -1) {
-          activeRequests.splice(i, 1);
+          removed = activeRequests.splice(i, 1);
+          inactiveRequests.push(removed.pop());
         }
 
         return this;
@@ -121,9 +126,9 @@ var pri = (function(undefined) {
       checkActiveRequestsState: function() {
         if (activeRequests.length < 1) {
           if (this.onallrequestsdone) {
-            this.onallrequestsdone();
+            this.onallrequestsdone.call(this.realRequest, inactiveRequests, window);
           } else if (settings.allRequestsDone) {
-            settings.allRequestsDone();
+            settings.allRequestsDone.call(this.realRequest, inactiveRequests, window);
           }
         }
 
