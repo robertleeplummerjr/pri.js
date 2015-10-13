@@ -11,18 +11,11 @@ Mostly for front end, end to end testing, at least that is why it was originally
 ## Usage
 ```javascript
 pri.newWindow('child1.html', {
-  allRequestsDone: function() {
-    //fire when all ajax requests in new window
-  },
-  beforeLoad: function(newWindow) {
-    //this is the mythical window.onBeforeLoad event... it isn't a myth anymore
-  },
-  load: function() {
-    //synonomouse with XMLHttpRequest.onload, fires just before XMLHttpRequest.onload
-  },
-  error          : null,
-  beforeLoad     : null,
-  close          : null
+  allRequestsDone: function() {},
+  beforeLoad: function(newWindow) {},
+  load: function() {},
+  error: function() {},
+  close: function() {}
 });
 ```
 
