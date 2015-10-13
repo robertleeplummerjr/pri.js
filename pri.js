@@ -14,35 +14,52 @@ var pri = (function(undefined) {
         load           : null,
         error          : null,
         beforeLoad     : null,
-        close          : null
+        close          : null,
+        persist        : true
       }
     ;
 
-  function pri(window, _settings) {
-    if (window === undefined) throw new Error('window object is required so as to intercept');
+  function whenScopeResets(scope, cb, seconds) {
+    seconds = seconds || 0;
 
-    var XMLHttpRequest = window.XMLHttpRequest
+    var int = setInterval(function() {
+      if (scope.XMLHttpRequest.isDeployed === undefined) {
+        clearInterval(int);
+        cb();
+      }
+    }, seconds);
+  }
+
+  function pri(scope, _settings) {
+    if (scope === undefined) throw new Error('window object is required so as to intercept');
+
+    var XMLHttpRequest = scope.XMLHttpRequest
       , settings = defaultSettings.extend(_settings)
       ;
 
-    window.addEventListener('beforeunload', function() {
+    scope.addEventListener('beforeunload', function() {
       //window is about to change into a new window
-      setTimeout(function() {
-        //window is now potentially new window
-        if (window.window.onbeforeload) {
-          window.window.onbeforeload();
-        }
-        if (settings.beforeLoad !== null) {
-          settings.beforeLoad(window.window);
+      whenScopeResets(scope, function() {
+        //because window has not cleaned up XMLHttpRequest, we can infer that it is about to be closed
+        if (scope.XMLHttpRequest === RequestListener) {
+          if (settings.close) {
+            settings.close(scope);
+          }
+          return;
         }
 
-        if (window.window && window.window.XMLHttpRequest) {
-          //window is now a confirmed new window
-          pri(window.window, settings);
-        } else if (settings.close) {
-          settings.close(window);
+        if (settings.persist) {
+          pri(scope.window, settings);
         }
-      }, 0);
+
+        if (scope.window.onbeforeload) {
+          scope.window.onbeforeload();
+        }
+
+        if (settings.beforeLoad !== null) {
+          settings.beforeLoad(scope.window);
+        }
+      });
     });
 
     function RequestListener(objParameters) {
@@ -131,10 +148,10 @@ var pri = (function(undefined) {
       checkActiveRequestsState: function() {
         if (activeRequests.length < 1) {
           if (this.onallrequestsdone) {
-            this.onallrequestsdone.call(this.realRequest, inactiveRequests, window);
+            this.onallrequestsdone.call(this.realRequest, inactiveRequests, scope);
           }
           if (settings.allRequestsDone) {
-            settings.allRequestsDone.call(this.realRequest, inactiveRequests, window);
+            settings.allRequestsDone.call(this.realRequest, inactiveRequests, scope);
           }
         }
 
@@ -142,7 +159,7 @@ var pri = (function(undefined) {
       }
     };
 
-    window.XMLHttpRequest = RequestListener;
+    scope.XMLHttpRequest = RequestListener;
   }
 
   defaultSettings.extend = function(settings) {
@@ -160,12 +177,17 @@ var pri = (function(undefined) {
   };
 
   pri.newWindow = function(url, settings) {
-    var childWindow = window.open(url);
-    setTimeout(function() {
-      if (settings.beforeLoad) {
-        settings.beforeLoad(childWindow);
-      }
-    }, 0);
+    var childWindow = window.open(url)
+      , int = setTimeout(function() {
+          if (childWindow.location.toString() !== 'about:blank') {
+            clearTimeout(int);
+            if (settings.beforeLoad) {
+              settings.beforeLoad(childWindow);
+            }
+          }
+        }, 10)
+      ;
+
     pri(childWindow, settings);
   };
 

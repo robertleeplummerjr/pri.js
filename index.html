@@ -2,11 +2,11 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>PRI - Persistent </title>
+    <title>PRI - Persistent Request Intercept</title>
 </head>
 <body>
 <button id="opener">Click me and I'll open a child</button>
-<h2>Your navigation trail</h2>
+<h4>Events</h4>
 <ul id="list">
 
 </ul>
@@ -27,6 +27,10 @@
             setTimeout(function() {
               document.title = title;
             }, 5000);
+
+            li = document.createElement('li');
+            li.innerHTML = 'All XMLHttpRequests are done';
+            list.appendChild(li);
           },
           beforeLoad: function(newWindow) {
             document.title = 'beforeLoad was fired from child';
@@ -35,7 +39,12 @@
             }, 5000);
 
             li = document.createElement('li');
-            li.innerHTML = newWindow.location;
+            li.innerHTML = 'You navigated to: ' + newWindow.location;
+            list.appendChild(li);
+          },
+          close: function() {
+            li = document.createElement('li');
+            li.innerHTML = 'You closed a window';
             list.appendChild(li);
           }
         });
