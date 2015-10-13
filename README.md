@@ -49,7 +49,7 @@ pri(window); //<- causes rewrite of XMLHttpRequest and setup of PRI
 //request here isn't the real XMLHttpRequest, but an imposter, designed to listen to the real request object
 var request = new XMLHttpRequest();
 
-//these property methods are not the real XMLHttpRequest methods, but will be fired just after the real request object mehtods fire
+//these property methods are not the real XMLHttpRequest methods, but will be fired just after the real request object methods fire
 request.onload = function() {};
 request.onerror = function() {};
 
