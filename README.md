@@ -33,7 +33,7 @@ pri.newWindow('http://url.here.com', settings);
 * beforeLoad(window) - fires just before a window's `ready` event.  Though does not load as the first script in the page.  This is sort of the mythical `window.onbeforeload` event... it isn't a myth anymore.
 * load - synonymous with `new XMLHttpRequest.onload`, fires just after all `XMLHttpRequest`'s `onload` events, `this` being the request that loaded, arguments are transferred from the request using apply
 * error - synonymous with `new XMLHttpRequest.onerror`, fires just after all `XMLHttpRequest`'s `onerror` events, `this` being the request with the error, arguments are transferred from the request using apply
-* close(window) - fires just after the child window closes
+* close(window) - fires just after the child window closes.  This is supposed to be impossible.
 
 ## Properties
 For instantiated XMLHttpRequest
