@@ -1,2 +1,2 @@
-# kid-commander
-experiment on how child window scope and parent window scope work together
+# listen to all requests and window changes persistantly from a parent window
+
