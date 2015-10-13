@@ -1,6 +1,6 @@
 # PRI - Persistent Request Interceptor
 ## Why?
-Mostly for front end, end to end testing, at least that is why it was originally written.
+Mostly for front end, end to end testing, at least that is why it was originally written.  We needed a way to listen to any request that was being made for a window
 
 ## What does PRI do?
 * opens child windows from a parent window and listens to them for you
