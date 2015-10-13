@@ -6,48 +6,38 @@
 </head>
 <body>
 <button id="opener">Click me and I'll open a child</button>
-<button id="detector">Click me to know which child is open</button>
 <ul id="list">
 
 </ul>
 </body>
-<script src="RequestIntercept.js"></script>
+<script src="pri.js"></script>
 <script>
-    //http://stackoverflow.com/questions/105034/create-guid-uuid-in-javascript#answer-105074
-    function guid() {
-        function s4() {
-            return Math.floor((1 + Math.random()) * 0x10000)
-                    .toString(16)
-                    .substring(1);
-        }
-        return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-                s4() + '-' + s4() + s4() + s4();
-    }
-
-    var opener = document.getElementById('opener'),
-        theGuid = window.theGuid = guid(),
-        detector = document.getElementById('detector'),
-        list = document.getElementById('list'),
+    var superDate   = (new Date()).toString(),
+        opener      = document.getElementById('opener'),
+        list        = document.getElementById('list'),
+        title       = document.title,
         li,
         childWindow = null;
 
     opener.addEventListener('click', function() {
-      childWindow = window.open('child1.html');
-        var r = new RequestIntercept(childWindow, {
-          allDone: function() {
-            alert('hi!  All your hijacked XML Http Requests have finished.  Have a nice day.');
+      pri.newWindow('child1.html', {
+          allRequestsDone: function() {
+            document.title = 'allRequestsDone was fired from child';
+            setTimeout(function() {
+              document.title = title;
+            }, 5000);
           },
-          windowChange: function(newWindow) {
-            alert('window changed');
+          beforeLoad: function(newWindow) {
+            document.title = 'beforeLoad was fired from child';
+            setTimeout(function() {
+              document.title = title;
+            }, 5000);
+
+            li = document.createElement('li');
+            li.innerHTML = newWindow.location;
+            list.appendChild(li);
           }
         });
-    });
-    detector.addEventListener('click', function() {
-        if (childWindow !== null) {
-          li = document.createElement('li');
-          li.innerHTML = childWindow.location;
-          list.appendChild(li);
-        }
     });
 </script>
 </html>
