@@ -29,6 +29,9 @@ var pri = (function(undefined) {
       //window is about to change into a new window
       setTimeout(function() {
         //window is now potentially new window
+        if (window.window.onbeforeload) {
+          window.window.onbeforeload();
+        }
         if (settings.beforeLoad !== null) {
           settings.beforeLoad(window.window);
         }
@@ -52,7 +55,8 @@ var pri = (function(undefined) {
 
         if (self.onload) {
           self.onload.apply(realRequest, arguments);
-        } else if (settings.load) {
+        }
+        if (settings.load) {
           settings.load.apply(realRequest, arguments);
         }
 
@@ -64,7 +68,8 @@ var pri = (function(undefined) {
       realRequest.onerror = function() {
         if (self.onerror !== null) {
           self.onerror.apply(realRequest, arguments);
-        } else if (settings.error !== null) {
+        }
+        if (settings.error !== null) {
           settings.error.apply(realRequest, arguments);
         }
 
@@ -127,7 +132,8 @@ var pri = (function(undefined) {
         if (activeRequests.length < 1) {
           if (this.onallrequestsdone) {
             this.onallrequestsdone.call(this.realRequest, inactiveRequests, window);
-          } else if (settings.allRequestsDone) {
+          }
+          if (settings.allRequestsDone) {
             settings.allRequestsDone.call(this.realRequest, inactiveRequests, window);
           }
         }
