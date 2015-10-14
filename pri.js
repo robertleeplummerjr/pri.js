@@ -23,7 +23,14 @@ var pri = (function(undefined) {
     seconds = seconds || 0;
 
     var int = setInterval(function() {
-      if (scope.XMLHttpRequest.isDeployed === undefined) {
+      try {
+        //here we listen to when the state of XMLHttpRequest changes
+        //in IE when the state changes, it throws an error, again indicating that the state has changed
+        if (scope.XMLHttpRequest.isDeployed === undefined) {
+          clearInterval(int);
+          cb();
+        }
+      } catch(e) {
         clearInterval(int);
         cb();
       }
@@ -32,6 +39,7 @@ var pri = (function(undefined) {
 
   function pri(scope, _settings) {
     if (scope === undefined) throw new Error('window object is required so as to intercept');
+    environmentCorrection(scope);
 
     var XMLHttpRequest = scope.XMLHttpRequest
       , settings = defaultSettings.extend(_settings)
@@ -40,8 +48,16 @@ var pri = (function(undefined) {
     scope.addEventListener('beforeunload', function() {
       //window is about to change into a new window
       whenScopeResets(scope, function() {
-        //because window has not cleaned up XMLHttpRequest, we can infer that it is about to be closed
-        if (scope.XMLHttpRequest === RequestListener) {
+        try {
+          //because window has not cleaned up XMLHttpRequest, we can infer that it is about to be closed
+          //in IE, scope is no longer accessible, throwing an error, thus the try and because we do not have access, we can again infer that it is about to be closed
+          if (scope.XMLHttpRequest === RequestListener) {
+            if (settings.close) {
+              settings.close(scope);
+            }
+            return;
+          }
+        } catch (e) {
           if (settings.close) {
             settings.close(scope);
           }
@@ -190,6 +206,14 @@ var pri = (function(undefined) {
 
     pri(childWindow, settings);
   };
+
+  function environmentCorrection(scope) {
+    if (scope.attachEvent && !scope.addEventListener) {
+      scope.addEventListener = function(event, listener, useCapture) {
+        return scope.attachEvent(event, listener, useCapture);
+      };
+    }
+  }
 
   return pri;
 })();
