@@ -111,12 +111,7 @@ var pri = (function(undefined) {
     }
 
     RequestListener.prototype = {
-      get status() {
-        return this.realRequest.status;
-      },
-      get statusText() {
-        return this.realRequest.statusText;
-      },
+      //override properties
       get response() {
         return this.realRequest.response;
       },
@@ -129,8 +124,31 @@ var pri = (function(undefined) {
       get responseXML() {
         return this.realRequest.responseXML;
       },
+      get status() {
+        return this.realRequest.status;
+      },
+      get statusText() {
+        return this.realRequest.statusText;
+      },
+
+      //new properties
       get isDeployed() {
         return isDeployed || false;
+      },
+
+      //override methods
+      abort: function() {
+        this.realRequest.abort();
+
+        return this;
+      },
+      getAllResponseHeaders: function() {
+        return this.realRequest.getAllResponseHeaders();
+      },
+      open: function(method, url, async, user, password) {
+        this.realRequest.open(method, url, async, user, password);
+
+        return this;
       },
       send: function() {
         this
@@ -139,11 +157,13 @@ var pri = (function(undefined) {
 
         return this;
       },
-      open: function(method, url, async, user, password) {
-        this.realRequest.open(method, url, async, user, password);
+      setRequestHeader: function(name, value) {
+        this.realRequest.setRequestHeader(name, value);
 
         return this;
       },
+
+      //new methods
       addActiveRequest: function() {
         activeRequests.push(this.realRequest);
 
